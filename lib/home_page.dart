@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_flutter_app/models/env_keys.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
 import 'package:my_flutter_app/service/text_to_speech.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
@@ -45,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final voiceId = await _settingsService.loadVoice();
     final ElevenLabsTTS tts = ElevenLabsTTS(
-      apiKey: dotenv.get("ELEVEN_LABS_API_KEY"),
+      apiKey: dotenv.get(EnvKeys.elevenLabsApiKey),
       voiceId: voiceId,
     );
     final audioBytes = await tts.synthesize(_catFact);
