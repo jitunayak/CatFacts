@@ -1,15 +1,10 @@
-import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:my_flutter_app/models/env_keys.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
-import 'package:my_flutter_app/service/text_to_speech.dart';
+import 'package:my_flutter_app/service/speech_service.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
 import 'package:my_flutter_app/widgets/shimmer_text.dart';
-import 'package:path_provider/path_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -23,61 +18,67 @@ class _MyHomePageState extends State<MyHomePage> {
   String _catImageUrl = '';
   bool _isSpeaking = false;
 
+  late final SpeechService _speechService;
+  final CatService _catService = CatService();
   final SettingsService _settingsService = SettingsService();
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final CatService _catService = CatService();
+
+  @override
+  void initState() {
+    super.initState();
+    _speechService = SpeechService(_settingsService, _audioPlayer);
+    _fetchCatFact(); // Fetch a fact when the screen is loaded
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
 
   Future<void> _speak() async {
-    _audioPlayer.onPlayerComplete.listen((event) {
+    try {
+      setState(() {
+        _isSpeaking = true;
+      });
+      await _speechService.play(_catFact);
       setState(() {
         _isSpeaking = false;
       });
-    });
-    if (_audioPlayer.state == PlayerState.playing) {
-      await _audioPlayer.stop();
+    } catch (e) {
+      _showErrorDialog("Error", e.toString());
       setState(() {
         _isSpeaking = false;
       });
-      return;
     }
-    setState(() {
-      _isSpeaking = true;
-    });
+  }
 
-    final voiceId = await _settingsService.loadVoice();
-    final ElevenLabsTTS tts = ElevenLabsTTS(
-      apiKey: dotenv.get(EnvKeys.elevenLabsApiKey),
-      voiceId: voiceId,
+  Future<void> _showErrorDialog(String title, String content) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
-    final audioBytes = await tts.synthesize(_catFact);
-    if (audioBytes != null) {
-      try {
-        final tempDir = await getTemporaryDirectory();
-        final tempFile = File('${tempDir.path}/temp_audio.mp3');
-        await tempFile.writeAsBytes(audioBytes, flush: true);
-        await _audioPlayer.play(DeviceFileSource(tempFile.path));
-      } catch (e) {
-        // ("Error playing audio: $e");
-      }
-    }
   }
 
   Future<void> _fetchCatFact() async {
     HapticFeedback.mediumImpact();
+    final shoudlAutoPlay = await _settingsService.loadAutoPlay();
     final String catFact = await _catService.getFact();
     setState(() {
       _catFact = catFact;
       _catImageUrl = _catService.getImage();
     });
-    if (await _settingsService.loadAutoPlay()) {
-      await _speak();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchCatFact(); // Fetch a fact when the screen is loaded
+    if (shoudlAutoPlay) await _speak();
   }
 
   @override

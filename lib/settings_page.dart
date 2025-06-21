@@ -21,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _buyMeCoffee = false;
   bool _autoPlay = false;
   Map<String, String> _selectedVoiceId = {};
+  bool _tts = false;
 
   final SettingsService _settingsService = SettingsService();
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -42,6 +43,12 @@ class _SettingsPageState extends State<SettingsPage> {
     _settingsService.loadAutoPlay().then((value) {
       setState(() {
         _autoPlay = value;
+      });
+    });
+
+    _settingsService.loadTTS().then((value) {
+      setState(() {
+        _tts = value;
       });
     });
   }
@@ -167,18 +174,18 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
 
             CupertinoFormSection.insetGrouped(
-              header: const Text('Voice Settings'),
+              header: const Text('Voice Settings (Pro) ✨'),
               footer: const Text('You can choose your preferred voice'),
               children: [
                 CupertinoFormRow(
-                  prefix: const Text('Voices'),
+                  prefix: const Text('AI Voices'),
                   child: CupertinoButton(
                     onPressed: () {
                       showCupertinoModalPopup(
                         context: context,
                         builder: (context) {
                           return CupertinoActionSheet(
-                            title: const Text('Voices'),
+                            title: const Text('AI Voices'),
                             actions: _voices.map((voice) {
                               return CupertinoActionSheetAction(
                                 child: Text(voice['name'] ?? 'Unknown'),
@@ -206,6 +213,39 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: CupertinoSwitch(
                     value: _autoPlay,
                     onChanged: (value) => {_toggleAutoPlay()},
+                  ),
+                ),
+                CupertinoFormRow(
+                  prefix: const Text('Default TTS'),
+                  child: CupertinoSwitch(
+                    value: _tts,
+                    onChanged: (value) {
+                      _settingsService.saveTTS(value);
+                      setState(() {
+                        _tts = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            CupertinoFormSection.insetGrouped(
+              header: const Text("System TTS Engine"),
+              footer: const Text(
+                "This is the fallback engine if you exhaust your quota or under a free plan. Try considering to opt for paid plan.",
+              ),
+              children: [
+                CupertinoFormRow(
+                  prefix: const Text('Default TTS (Free)'),
+                  child: CupertinoSwitch(
+                    value: _tts,
+                    onChanged: (value) {
+                      _settingsService.saveTTS(value);
+                      setState(() {
+                        _tts = value;
+                      });
+                    },
                   ),
                 ),
               ],
