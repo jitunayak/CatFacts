@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_flutter_app/home_page.dart';
+import 'package:my_flutter_app/router.dart';
 import 'package:my_flutter_app/settings_page.dart';
 
 Future<void> main() async {
@@ -15,11 +16,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return CupertinoApp.router(
       title: 'Flutter Demo',
       theme: CupertinoThemeData(primaryColor: CupertinoColors.systemBlue),
-      home: const MainScreen(title: 'Cat facts'),
       debugShowCheckedModeBanner: false,
+      routerConfig: createRouter,
     );
   }
 }

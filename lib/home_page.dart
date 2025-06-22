@@ -73,10 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _catFact = catFact;
     });
     final catImage = _catService.getImageBytes();
-    _catService.fetchAndCacheImage();
     setState(() {
       _catImage = catImage;
     });
+    _catService.fetchAndCacheImage();
 
     if (shoudlAutoPlay) await _speak();
   }
