@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_flutter_app/models/router_path.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
 
@@ -176,7 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 CupertinoListTile(
                   title: const Text("Appearance"),
                   padding: EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
-                  onTap: () => context.push("/settings/appearance"),
+                  onTap: () => context.push(RouterPath().appearance),
                   trailing: CupertinoListTileChevron(),
                 ),
               ],

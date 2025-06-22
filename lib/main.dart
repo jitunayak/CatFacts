@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:my_flutter_app/home_page.dart';
+import 'package:my_flutter_app/pages/home_page.dart';
+import 'package:my_flutter_app/pages/settings_page.dart';
 import 'package:my_flutter_app/router.dart';
-import 'package:my_flutter_app/settings_page.dart';
 
 Future<void> main() async {
   await dotenv.load();
