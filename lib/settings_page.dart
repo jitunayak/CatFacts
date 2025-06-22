@@ -208,25 +208,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Text(_selectedVoiceId['name'] ?? 'Select Voice'),
                   ),
                 ),
-                CupertinoFormRow(
-                  prefix: const Text('Auto Play'),
-                  child: CupertinoSwitch(
-                    value: _autoPlay,
-                    onChanged: (value) => {_toggleAutoPlay()},
-                  ),
-                ),
-                CupertinoFormRow(
-                  prefix: const Text('Default TTS'),
-                  child: CupertinoSwitch(
-                    value: _tts,
-                    onChanged: (value) {
-                      _settingsService.saveTTS(value);
-                      setState(() {
-                        _tts = value;
-                      });
-                    },
-                  ),
-                ),
               ],
             ),
 
@@ -246,6 +227,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         _tts = value;
                       });
                     },
+                  ),
+                ),
+                CupertinoFormRow(
+                  prefix: const Text('Auto Play'),
+                  child: CupertinoSwitch(
+                    value: _autoPlay,
+                    onChanged: (value) => {_toggleAutoPlay()},
                   ),
                 ),
               ],

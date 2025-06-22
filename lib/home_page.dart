@@ -15,8 +15,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _catFact = "Press the button to get a cat fact";
-  String _catImageUrl = '';
-  bool _isSpeaking = false;
+  Uint8List? _catImage;
 
   late final SpeechService _speechService;
   final CatService _catService = CatService();
@@ -27,6 +26,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _speechService = SpeechService(_settingsService, _audioPlayer);
+    _catService.fetchAndCacheImage().then((value) {
+      setState(() {
+        _catImage = value;
+      });
+    });
     _fetchCatFact(); // Fetch a fact when the screen is loaded
   }
 
@@ -38,18 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _speak() async {
     try {
-      setState(() {
-        _isSpeaking = true;
-      });
       await _speechService.play(_catFact);
-      setState(() {
-        _isSpeaking = false;
-      });
     } catch (e) {
       _showErrorDialog("Error", e.toString());
-      setState(() {
-        _isSpeaking = false;
-      });
     }
   }
 
@@ -76,8 +71,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final String catFact = await _catService.getFact();
     setState(() {
       _catFact = catFact;
-      _catImageUrl = _catService.getImage();
     });
+    final catImage = _catService.getImageBytes();
+    _catService.fetchAndCacheImage();
+    setState(() {
+      _catImage = catImage;
+    });
+
     if (shoudlAutoPlay) await _speak();
   }
 
@@ -97,21 +97,23 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Transform(
                 transform: Matrix4.identity(),
                 alignment: FractionalOffset.center,
-                child: Image.network(
-                  height: 160,
-                  width: 160,
-                  _catImageUrl,
-                  key: ValueKey(_catFact), // Force reload
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: CupertinoColors.systemGrey4,
-                    child: Icon(
-                      CupertinoIcons.photo,
-                      size: 60,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                  ),
-                ),
+                child: _catImage == null
+                    ? const CupertinoActivityIndicator()
+                    : Image.memory(
+                        height: 160,
+                        width: 160,
+                        _catImage!,
+                        key: ValueKey(_catFact), // Force reload
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: CupertinoColors.systemGrey4,
+                          child: Icon(
+                            CupertinoIcons.photo,
+                            size: 60,
+                            color: CupertinoColors.systemGrey,
+                          ),
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 24),
@@ -162,24 +164,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 16),
 
-                CupertinoButton(
-                  color: CupertinoColors.systemGrey3,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  borderRadius: BorderRadius.circular(28),
-                  pressedOpacity: 0.5,
-                  onPressed: _speak,
-                  minimumSize: Size(50, 50),
-                  child: _isSpeaking
-                      ? const Icon(
-                          CupertinoIcons.stop_fill,
-                          size: 24,
-                          color: CupertinoColors.white,
-                        )
-                      : const Icon(
-                          CupertinoIcons.volume_up,
-                          size: 24,
-                          color: CupertinoColors.white,
-                        ),
+                StreamBuilder<bool>(
+                  stream: _speechService.speakingStateStream,
+                  initialData: _speechService.isSpeaking,
+                  builder: (context, snapshot) {
+                    final isSpeaking = snapshot.data ?? false;
+                    return CupertinoButton(
+                      color: CupertinoColors.systemGrey3,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      borderRadius: BorderRadius.circular(28),
+                      pressedOpacity: 0.5,
+                      onPressed: isSpeaking ? _speechService.stop : _speak,
+                      minimumSize: Size(50, 50),
+                      child: isSpeaking
+                          ? const Icon(
+                              CupertinoIcons.stop_fill,
+                              size: 24,
+                              color: CupertinoColors.white,
+                            )
+                          : const Icon(
+                              CupertinoIcons.volume_up,
+                              size: 24,
+                              color: CupertinoColors.white,
+                            ),
+                    );
+                  },
                 ),
               ],
             ),
