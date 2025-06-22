@@ -234,19 +234,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 CupertinoListTile(
                   leading: Icon(CupertinoIcons.mic),
                   title: const Text('Default TTS (Free)'),
-                  onTap: () {
-                    bool value = !_tts;
-                    _settingsService.saveTTS(value);
-                    setState(() {
-                      _tts = value;
-                    });
-                  },
-                  trailing: CupertinoSwitch(value: _tts, onChanged: (data) {}),
+                  trailing: CupertinoSwitch(
+                    value: _tts,
+                    onChanged: (data) {
+                      bool value = !_tts;
+                      _settingsService.saveTTS(value);
+                      setState(() {
+                        _tts = value;
+                      });
+                    },
+                  ),
                 ),
                 CupertinoListTile(
                   leading: Icon(CupertinoIcons.play),
                   title: const Text('Auto Play'),
-                  onTap: () => _toggleAutoPlay(),
                   trailing: CupertinoSwitch(
                     value: _autoPlay,
                     onChanged: (value) => {_toggleAutoPlay()},
