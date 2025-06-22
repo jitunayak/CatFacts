@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:my_flutter_app/models/env_keys.dart';
+import 'package:my_flutter_app/models/app_config.dart';
 import 'package:my_flutter_app/service/eleven_labs.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
 import 'package:path_provider/path_provider.dart';
@@ -116,7 +116,7 @@ class SpeechService {
 
       final voiceId = await _settingsService.loadVoice();
       final ElevenLabsTTS tts = ElevenLabsTTS(
-        apiKey: dotenv.get(EnvKeys.elevenLabsApiKey),
+        apiKey: dotenv.get(Config.env.elevenLabsApiKey),
         voiceId: voiceId,
       );
 
