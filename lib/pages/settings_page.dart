@@ -132,9 +132,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 'You agree with terms and conditions of the app',
               ),
               children: [
-                CupertinoFormRow(
-                  prefix: const Text('Notifications'),
-                  child: CupertinoSwitch(
+                CupertinoListTile(
+                  title: const Text('Notifications'),
+                  trailing: CupertinoSwitch(
                     value: _notificationsEnabled,
                     onChanged: (bool value) {
                       if (value) {
@@ -146,9 +146,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                 ),
-                CupertinoFormRow(
-                  prefix: const Text('Buy Me Coffee'),
-                  child: CupertinoSwitch(
+                CupertinoListTile(
+                  title: const Text('Buy Me Coffee'),
+                  trailing: CupertinoSwitch(
                     value: _buyMeCoffee,
                     onChanged: (bool value) {
                       setState(() {
@@ -187,9 +187,9 @@ class _SettingsPageState extends State<SettingsPage> {
               header: const Text('Voice Settings (Pro) ✨'),
               footer: const Text('You can choose your preferred voice'),
               children: [
-                CupertinoFormRow(
-                  prefix: const Text('AI Voices'),
-                  child: CupertinoButton(
+                CupertinoListTile(
+                  title: const Text('AI Voices'),
+                  trailing: CupertinoButton(
                     onPressed: () {
                       showCupertinoModalPopup(
                         context: context,
@@ -227,21 +227,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 "This is the fallback engine if you exhaust your quota or under a free plan. Try considering to opt for paid plan.",
               ),
               children: [
-                CupertinoFormRow(
-                  prefix: const Text('Default TTS (Free)'),
-                  child: CupertinoSwitch(
-                    value: _tts,
-                    onChanged: (value) {
-                      _settingsService.saveTTS(value);
-                      setState(() {
-                        _tts = value;
-                      });
-                    },
-                  ),
+                CupertinoListTile(
+                  title: const Text('Default TTS (Free)'),
+                  onTap: () {
+                    bool value = !_tts;
+                    _settingsService.saveTTS(value);
+                    setState(() {
+                      _tts = value;
+                    });
+                  },
+                  trailing: CupertinoSwitch(value: _tts, onChanged: (data) {}),
                 ),
-                CupertinoFormRow(
-                  prefix: const Text('Auto Play'),
-                  child: CupertinoSwitch(
+                CupertinoListTile(
+                  title: const Text('Auto Play'),
+                  onTap: () => _toggleAutoPlay(),
+                  trailing: CupertinoSwitch(
                     value: _autoPlay,
                     onChanged: (value) => {_toggleAutoPlay()},
                   ),
