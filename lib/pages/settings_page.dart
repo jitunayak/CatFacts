@@ -133,6 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               children: [
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.bell),
                   title: const Text('Notifications'),
                   trailing: CupertinoSwitch(
                     value: _notificationsEnabled,
@@ -147,6 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.gift),
                   title: const Text('Buy Me Coffee'),
                   trailing: CupertinoSwitch(
                     value: _buyMeCoffee,
@@ -175,6 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.settings),
                   title: const Text("Appearance"),
                   padding: EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
                   onTap: () => context.push(RouterPath().appearance),
@@ -188,6 +191,7 @@ class _SettingsPageState extends State<SettingsPage> {
               footer: const Text('You can choose your preferred voice'),
               children: [
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.speaker_2),
                   title: const Text('AI Voices'),
                   trailing: CupertinoButton(
                     onPressed: () {
@@ -228,6 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               children: [
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.mic),
                   title: const Text('Default TTS (Free)'),
                   onTap: () {
                     bool value = !_tts;
@@ -239,6 +244,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   trailing: CupertinoSwitch(value: _tts, onChanged: (data) {}),
                 ),
                 CupertinoListTile(
+                  leading: Icon(CupertinoIcons.play),
                   title: const Text('Auto Play'),
                   onTap: () => _toggleAutoPlay(),
                   trailing: CupertinoSwitch(

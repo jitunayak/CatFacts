@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoApp.router(
       title: 'Flutter Demo',
-      theme: CupertinoThemeData(primaryColor: CupertinoColors.systemBlue),
+      theme: CupertinoThemeData(),
       debugShowCheckedModeBanner: false,
       routerConfig: createRouter,
     );
