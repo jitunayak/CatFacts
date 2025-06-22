@@ -87,7 +87,10 @@ class _MyHomePageState extends State<MyHomePage> {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text(widget.title)),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(widget.title),
+        transitionBetweenRoutes: false,
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

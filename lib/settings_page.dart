@@ -118,7 +118,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('Settings')),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Settings'),
+        transitionBetweenRoutes: false,
+      ),
       child: SafeArea(
         child: ListView(
           children: [
