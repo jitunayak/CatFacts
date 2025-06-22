@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         transitionBetweenRoutes: false,
       ),
       child: Center(
-        child: _catImage == null
+        child: _catImage == null && !isDarkMode
             ? AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 child: VideoPlayer(_controller),
