@@ -20,3 +20,9 @@ Update splash screen
 ```bash
 dart run flutter_native_splash:create
 ```
+
+Update App Icon
+
+```bash
+dart run flutter_launcher_icons
+```
