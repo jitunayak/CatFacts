@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
-import 'package:my_flutter_app/bloc/theme_state.dart';
+import 'package:my_flutter_app/pages/appearance_page.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
 import 'package:my_flutter_app/service/speech_service.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
@@ -103,9 +103,9 @@ class _MyHomePageState extends State<MyHomePage> {
         transitionBetweenRoutes: false,
       ),
       child: Center(
-        child: BlocBuilder<ThemeCubit, ThemeState>(
+        child: BlocBuilder<ThemeCubit, Themes>(
           builder: (context, state) =>
-              state is LightThemeState && _catImage == null
+              state == Themes.light && _catImage == null
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,
                   child: VideoPlayer(_controller),
@@ -141,8 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: BlocBuilder<ThemeCubit, ThemeState>(
-                        builder: (context, state) => state is DarkThemeState
+                      child: BlocBuilder<ThemeCubit, Themes>(
+                        builder: (context, state) => state == Themes.dark
                             ? ShimmerText(text: _catFact)
                             : Text(
                                 _catFact,

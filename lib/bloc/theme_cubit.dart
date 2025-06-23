@@ -1,19 +1,20 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:my_flutter_app/bloc/theme_state.dart';
 
-class ThemeCubit extends HydratedCubit<ThemeState> {
-  ThemeCubit() : super(SystemThemeState());
+enum Themes { light, dark, system }
+
+class ThemeCubit extends HydratedCubit<Themes> {
+  ThemeCubit() : super(Themes.system);
 
   void toggleToDarkTheme() {
-    emit(DarkThemeState());
+    emit(Themes.dark);
   }
 
   void toggleToLightTheme() {
-    emit(LightThemeState());
+    emit(Themes.light);
   }
 
   void toggleSystemTheme() {
-    emit(SystemThemeState());
+    emit(Themes.system);
     // MediaQueryData mediaQuery = MediaQueryData.fromView(
     //   PlatformDispatcher.instance.views.first,
     // );
@@ -27,20 +28,20 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
   }
 
   @override
-  ThemeState? fromJson(Map<String, dynamic> json) {
+  Themes? fromJson(Map<String, dynamic> json) {
     if (json['theme'] == 'dark') {
-      return DarkThemeState();
+      return Themes.dark;
     } else if (json['theme'] == 'light') {
-      return LightThemeState();
+      return Themes.light;
     }
-    return SystemThemeState();
+    return Themes.system;
   }
 
   @override
-  Map<String, dynamic>? toJson(ThemeState state) {
-    if (state is DarkThemeState) {
+  Map<String, dynamic>? toJson(Themes state) {
+    if (state == Themes.dark) {
       return {'theme': 'dark'};
-    } else if (state is LightThemeState) {
+    } else if (state == Themes.light) {
       return {'theme': 'light'};
     }
     return {'theme': 'system'};

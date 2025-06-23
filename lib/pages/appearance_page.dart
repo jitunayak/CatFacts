@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
-import 'package:my_flutter_app/bloc/theme_state.dart';
-
-enum Themes { light, dark, system }
 
 class Tick extends StatelessWidget {
   final bool isSelected;
@@ -45,7 +42,7 @@ class _AppearancePageState extends State<AppearancePage> {
         previousPageTitle: "Settings",
       ),
       child: SafeArea(
-        child: BlocBuilder<ThemeCubit, ThemeState>(
+        child: BlocBuilder<ThemeCubit, Themes>(
           builder: (context, state) => ListView(
             children: [
               CupertinoListSection.insetGrouped(
@@ -53,7 +50,7 @@ class _AppearancePageState extends State<AppearancePage> {
                   CupertinoListTile(
                     title: const Text("Light"),
                     leading: Icon(CupertinoIcons.sun_dust),
-                    trailing: Tick(isSelected: state is LightThemeState),
+                    trailing: Tick(isSelected: state == Themes.light),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
                     },
@@ -62,7 +59,7 @@ class _AppearancePageState extends State<AppearancePage> {
                   CupertinoListTile(
                     title: const Text("Dark"),
                     leading: Icon(CupertinoIcons.moon_stars),
-                    trailing: Tick(isSelected: state is DarkThemeState),
+                    trailing: Tick(isSelected: state == Themes.dark),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleToDarkTheme();
                     },
@@ -71,7 +68,7 @@ class _AppearancePageState extends State<AppearancePage> {
                   CupertinoListTile(
                     title: const Text("System"),
                     leading: Icon(CupertinoIcons.device_phone_portrait),
-                    trailing: Tick(isSelected: state is SystemThemeState),
+                    trailing: Tick(isSelected: state == Themes.system),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleSystemTheme();
                     },

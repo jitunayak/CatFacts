@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_flutter_app/bloc/preference_cubit.dart';
 import 'package:my_flutter_app/constants/router_path.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
@@ -19,11 +21,8 @@ final List<Map<String, String>> _voices = [
 ];
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _notificationsEnabled = false;
   bool _buyMeCoffee = false;
-  bool _autoPlay = false;
   Map<String, String> _selectedVoiceId = {};
-  bool _tts = false;
 
   final SettingsService _settingsService = SettingsService();
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -39,18 +38,6 @@ class _SettingsPageState extends State<SettingsPage> {
       );
       setState(() {
         _selectedVoiceId = voice;
-      });
-    });
-
-    _settingsService.loadAutoPlay().then((value) {
-      setState(() {
-        _autoPlay = value;
-      });
-    });
-
-    _settingsService.loadTTS().then((value) {
-      setState(() {
-        _tts = value;
       });
     });
   }
@@ -75,13 +62,6 @@ class _SettingsPageState extends State<SettingsPage> {
         );
 
     await _notificationsPlugin.initialize(initializationSettings);
-  }
-
-  Future<void> _toggleAutoPlay() async {
-    bool value = await _settingsService.toggleAutoPlay();
-    setState(() {
-      _autoPlay = value;
-    });
   }
 
   void _showNotification() async {
@@ -116,146 +96,148 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  var preferenceCubit = PreferenceCubit();
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Settings'),
-        transitionBetweenRoutes: false,
-      ),
-      child: SafeArea(
-        child: ListView(
-          children: [
-            CupertinoFormSection.insetGrouped(
-              header: const Text('Preferences'),
-              footer: const Text(
-                'You agree with terms and conditions of the app',
-              ),
+    return BlocProvider(
+      create: (context) => preferenceCubit,
+      child: CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('Settings'),
+          transitionBetweenRoutes: false,
+        ),
+        child: SafeArea(
+          child: BlocBuilder<PreferenceCubit, Preferences>(
+            builder: (context, state) => ListView(
               children: [
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.bell),
-                  title: const Text('Notifications'),
-                  trailing: CupertinoSwitch(
-                    value: _notificationsEnabled,
-                    onChanged: (bool value) {
-                      if (value) {
-                        _showNotification();
-                      }
-                      setState(() {
-                        _notificationsEnabled = value;
-                      });
-                    },
+                CupertinoFormSection.insetGrouped(
+                  header: const Text('Preferences'),
+                  footer: const Text(
+                    'You agree with terms and conditions of the app',
                   ),
-                ),
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.gift),
-                  title: const Text('Buy Me Coffee'),
-                  trailing: CupertinoSwitch(
-                    value: _buyMeCoffee,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _buyMeCoffee = value;
-                        if (value) {
-                          showCupertinoDialog(
-                            context: context,
-                            builder: (context) => CupertinoAlertDialog(
-                              title: const Text('Thank you!'),
-                              content: const Text(
-                                'Thanks for your support! ☕️',
-                              ),
-                              actions: [
-                                CupertinoDialogAction(
-                                  child: const Text('Close'),
-                                  onPressed: () => Navigator.of(context).pop(),
+                  children: [
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.bell),
+                      title: const Text('Notifications'),
+                      trailing: CupertinoSwitch(
+                        value: preferenceCubit.state.isNotificationEnabled,
+                        onChanged: (bool value) {
+                          preferenceCubit.saveIsNotificationEnabled(value);
+                          _showNotification();
+                        },
+                      ),
+                    ),
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.gift),
+                      title: const Text('Buy Me Coffee'),
+                      trailing: CupertinoSwitch(
+                        value: _buyMeCoffee,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _buyMeCoffee = value;
+                            if (value) {
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (context) => CupertinoAlertDialog(
+                                  title: const Text('Thank you!'),
+                                  content: const Text(
+                                    'Thanks for your support! ☕️',
+                                  ),
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      child: const Text('Close'),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                      });
-                    },
-                  ),
-                ),
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.settings),
-                  title: const Text("Appearance"),
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
-                  onTap: () => context.push(RouterPath().appearance),
-                  trailing: CupertinoListTileChevron(),
-                ),
-              ],
-            ),
-
-            CupertinoFormSection.insetGrouped(
-              header: const Text('Voice Settings (Pro) ✨'),
-              footer: const Text('You can choose your preferred voice'),
-              children: [
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.speaker_2),
-                  title: const Text('AI Voices'),
-                  trailing: CupertinoButton(
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoActionSheet(
-                            title: const Text('AI Voices'),
-                            actions: _voices.map((voice) {
-                              return CupertinoActionSheetAction(
-                                child: Text(voice['name'] ?? 'Unknown'),
-                                onPressed: () {
-                                  // Use voice as Map<String, String>
-                                  setState(() {
-                                    _selectedVoiceId = voice;
-                                  });
-                                  _settingsService.saveVoice(
-                                    voice['identifier'] ?? '',
-                                  );
-                                  Navigator.of(context).pop();
-                                },
                               );
-                            }).toList(),
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.settings),
+                      title: const Text("Appearance"),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 12, 16, 12),
+                      onTap: () => context.push(RouterPath().appearance),
+                      trailing: CupertinoListTileChevron(),
+                    ),
+                  ],
+                ),
+
+                CupertinoFormSection.insetGrouped(
+                  header: const Text('Voice Settings (Pro) ✨'),
+                  footer: const Text('You can choose your preferred voice'),
+                  children: [
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.speaker_2),
+                      title: const Text('AI Voices'),
+                      trailing: CupertinoButton(
+                        onPressed: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoActionSheet(
+                                title: const Text('AI Voices'),
+                                actions: _voices.map((voice) {
+                                  return CupertinoActionSheetAction(
+                                    child: Text(voice['name'] ?? 'Unknown'),
+                                    onPressed: () {
+                                      // Use voice as Map<String, String>
+                                      setState(() {
+                                        _selectedVoiceId = voice;
+                                      });
+                                      _settingsService.saveVoice(
+                                        voice['identifier'] ?? '',
+                                      );
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                }).toList(),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    child: Text(_selectedVoiceId['name'] ?? 'Select Voice'),
-                  ),
+                        child: Text(_selectedVoiceId['name'] ?? 'Select Voice'),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
 
-            CupertinoFormSection.insetGrouped(
-              header: const Text("System TTS Engine"),
-              footer: const Text(
-                "This is the fallback engine if you exhaust your quota or under a free plan. Try considering to opt for paid plan.",
-              ),
-              children: [
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.mic),
-                  title: const Text('Default TTS (Free)'),
-                  trailing: CupertinoSwitch(
-                    value: _tts,
-                    onChanged: (data) {
-                      bool value = !_tts;
-                      _settingsService.saveTTS(value);
-                      setState(() {
-                        _tts = value;
-                      });
-                    },
+                CupertinoFormSection.insetGrouped(
+                  header: const Text("System TTS Engine"),
+                  footer: const Text(
+                    "This is the fallback engine if you exhaust your quota or under a free plan. Try considering to opt for paid plan.",
                   ),
-                ),
-                CupertinoListTile(
-                  leading: Icon(CupertinoIcons.play),
-                  title: const Text('Auto Play'),
-                  trailing: CupertinoSwitch(
-                    value: _autoPlay,
-                    onChanged: (value) => {_toggleAutoPlay()},
-                  ),
+                  children: [
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.mic),
+                      title: const Text('Default TTS (Free)'),
+                      trailing: CupertinoSwitch(
+                        value: preferenceCubit.state.isSystemTTSEnabled,
+                        onChanged: (value) => {
+                          preferenceCubit.saveIsSystemTTSEnabled(value),
+                        },
+                      ),
+                    ),
+                    CupertinoListTile(
+                      leading: Icon(CupertinoIcons.play),
+                      title: const Text('Auto Play'),
+                      trailing: CupertinoSwitch(
+                        value: preferenceCubit.state.shoudlAutoPlay,
+                        onChanged: (value) => {
+                          preferenceCubit.saveShouldAutoPlay(value),
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

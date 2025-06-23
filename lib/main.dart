@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
-import 'package:my_flutter_app/bloc/theme_state.dart';
 import 'package:my_flutter_app/constants/app_theme.dart';
+import 'package:my_flutter_app/pages/appearance_page.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
 import 'package:my_flutter_app/pages/settings_page.dart';
 import 'package:my_flutter_app/router.dart';
@@ -34,12 +34,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeState>(
+    return BlocBuilder<ThemeCubit, Themes>(
       builder: (context, state) => CupertinoApp.router(
         theme: {
-          if (state is LightThemeState)
+          if (state == Themes.light)
             AppTheme.lightTheme
-          else if (state is DarkThemeState)
+          else if (state == Themes.dark)
             AppTheme.darkTheme
           else
             CupertinoThemeData(),
