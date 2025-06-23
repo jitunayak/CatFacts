@@ -1,13 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_flutter_app/bloc/theme_cubit.dart';
+import 'package:my_flutter_app/bloc/theme_state.dart';
+import 'package:my_flutter_app/constants/app_theme.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
 import 'package:my_flutter_app/pages/settings_page.dart';
 import 'package:my_flutter_app/router.dart';
 
 Future<void> main() async {
   await dotenv.load();
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (BuildContext context) => ThemeCubit(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,11 +25,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp.router(
-      title: 'Flutter Demo',
-      theme: CupertinoThemeData(),
-      debugShowCheckedModeBanner: false,
-      routerConfig: createRouter,
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, state) => CupertinoApp.router(
+        theme: state is LightThemeState
+            ? AppTheme.lightTheme
+            : AppTheme.darkTheme,
+        debugShowCheckedModeBanner: false,
+        routerConfig: createRouter,
+      ),
     );
   }
 }

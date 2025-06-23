@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_flutter_app/bloc/theme_cubit.dart';
 
 enum Themes { light, dark, system }
 
@@ -47,6 +49,7 @@ class _AppearancePageState extends State<AppearancePage> {
                   title: const Text("Light"),
                   trailing: Tick(isSelected: _theme == Themes.light),
                   onTap: () {
+                    BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
                     setState(() {
                       _theme = Themes.light;
                     });
@@ -57,6 +60,7 @@ class _AppearancePageState extends State<AppearancePage> {
                   title: const Text("Dark"),
                   trailing: Tick(isSelected: _theme == Themes.dark),
                   onTap: () {
+                    BlocProvider.of<ThemeCubit>(context).toggleToDarkTheme();
                     setState(() {
                       _theme = Themes.dark;
                     });

@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:my_flutter_app/constants/app_config.dart';
 import 'package:my_flutter_app/main.dart';
-import 'package:my_flutter_app/models/app_config.dart';
 import 'package:my_flutter_app/pages/appearance_page.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
 import 'package:my_flutter_app/pages/settings_page.dart';

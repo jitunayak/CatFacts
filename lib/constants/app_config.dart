@@ -1,5 +1,5 @@
-import 'package:my_flutter_app/models/env_keys.dart';
-import 'package:my_flutter_app/models/router_path.dart';
+import 'package:my_flutter_app/constants/env_keys.dart';
+import 'package:my_flutter_app/constants/router_path.dart';
 
 class Config {
   Config._();
