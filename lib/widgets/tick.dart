@@ -13,7 +13,7 @@ class Tick extends StatelessWidget {
               CupertinoIcons.check_mark_circled_solid,
               color: CupertinoTheme.of(context).brightness == Brightness.dark
                   ? CupertinoColors.systemGrey
-                  : CupertinoColors.activeBlue,
+                  : CupertinoTheme.of(context).primaryColor,
             )
           : const SizedBox(height: 20),
     );

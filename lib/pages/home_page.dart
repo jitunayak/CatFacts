@@ -157,7 +157,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CupertinoButton(
-                          color: CupertinoColors.activeBlue, // Background color
+                          color: CupertinoTheme.of(
+                            context,
+                          ).primaryColor, // Background color
                           padding: EdgeInsets.symmetric(
                             horizontal: 32,
                             vertical: 8,

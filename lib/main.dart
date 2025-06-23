@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
 import 'package:my_flutter_app/constants/app_theme.dart';
-import 'package:my_flutter_app/pages/appearance_page.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
 import 'package:my_flutter_app/pages/settings_page.dart';
 import 'package:my_flutter_app/router.dart';
