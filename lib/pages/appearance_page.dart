@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
+import 'package:my_flutter_app/bloc/theme_state.dart';
 
 enum Themes { light, dark, system }
 
@@ -30,8 +31,6 @@ class AppearancePage extends StatefulWidget {
 }
 
 class _AppearancePageState extends State<AppearancePage> {
-  Themes _theme = Themes.system;
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -41,44 +40,38 @@ class _AppearancePageState extends State<AppearancePage> {
         previousPageTitle: "Settings",
       ),
       child: SafeArea(
-        child: ListView(
-          children: [
-            CupertinoListSection.insetGrouped(
-              children: [
-                CupertinoListTile(
-                  title: const Text("Light"),
-                  trailing: Tick(isSelected: _theme == Themes.light),
-                  onTap: () {
-                    BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
-                    setState(() {
-                      _theme = Themes.light;
-                    });
-                  },
-                ),
+        child: BlocBuilder<ThemeCubit, ThemeState>(
+          builder: (context, state) => ListView(
+            children: [
+              CupertinoListSection.insetGrouped(
+                children: [
+                  CupertinoListTile(
+                    title: const Text("Light"),
+                    trailing: Tick(isSelected: state is LightThemeState),
+                    onTap: () {
+                      BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
+                    },
+                  ),
 
-                CupertinoListTile(
-                  title: const Text("Dark"),
-                  trailing: Tick(isSelected: _theme == Themes.dark),
-                  onTap: () {
-                    BlocProvider.of<ThemeCubit>(context).toggleToDarkTheme();
-                    setState(() {
-                      _theme = Themes.dark;
-                    });
-                  },
-                ),
+                  CupertinoListTile(
+                    title: const Text("Dark"),
+                    trailing: Tick(isSelected: state is DarkThemeState),
+                    onTap: () {
+                      BlocProvider.of<ThemeCubit>(context).toggleToDarkTheme();
+                    },
+                  ),
 
-                CupertinoListTile(
-                  title: const Text("System"),
-                  trailing: Tick(isSelected: _theme == Themes.system),
-                  onTap: () {
-                    setState(() {
-                      _theme = Themes.system;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ],
+                  CupertinoListTile(
+                    title: const Text("System"),
+                    trailing: Tick(isSelected: state is SystemThemeState),
+                    onTap: () {
+                      BlocProvider.of<ThemeCubit>(context).toggleSystemTheme();
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

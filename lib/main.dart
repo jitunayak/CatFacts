@@ -27,9 +27,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) => CupertinoApp.router(
-        theme: state is LightThemeState
-            ? AppTheme.lightTheme
-            : AppTheme.darkTheme,
+        theme: {
+          if (state is LightThemeState)
+            AppTheme.lightTheme
+          else if (state is DarkThemeState)
+            AppTheme.darkTheme
+          else
+            CupertinoThemeData(),
+        }.first, // Access the first element of the set
+        title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         routerConfig: createRouter,
       ),
