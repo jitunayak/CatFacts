@@ -32,6 +32,11 @@ class AppearancePage extends StatefulWidget {
 
 class _AppearancePageState extends State<AppearancePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
@@ -47,6 +52,7 @@ class _AppearancePageState extends State<AppearancePage> {
                 children: [
                   CupertinoListTile(
                     title: const Text("Light"),
+                    leading: Icon(CupertinoIcons.sun_dust),
                     trailing: Tick(isSelected: state is LightThemeState),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
@@ -55,6 +61,7 @@ class _AppearancePageState extends State<AppearancePage> {
 
                   CupertinoListTile(
                     title: const Text("Dark"),
+                    leading: Icon(CupertinoIcons.moon_stars),
                     trailing: Tick(isSelected: state is DarkThemeState),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleToDarkTheme();
@@ -63,6 +70,7 @@ class _AppearancePageState extends State<AppearancePage> {
 
                   CupertinoListTile(
                     title: const Text("System"),
+                    leading: Icon(CupertinoIcons.device_phone_portrait),
                     trailing: Tick(isSelected: state is SystemThemeState),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleSystemTheme();

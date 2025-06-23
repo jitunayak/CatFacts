@@ -1,16 +1,25 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
 import 'package:my_flutter_app/bloc/theme_state.dart';
 import 'package:my_flutter_app/constants/app_theme.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
 import 'package:my_flutter_app/pages/settings_page.dart';
 import 'package:my_flutter_app/router.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   await dotenv.load();
+  WidgetsFlutterBinding.ensureInitialized();
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
+  );
   runApp(
     BlocProvider(
       create: (BuildContext context) => ThemeCubit(),

@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Center(
         child: BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, state) =>
-              state is DarkThemeState && _catImage == null
+              state is LightThemeState && _catImage == null
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,
                   child: VideoPlayer(_controller),

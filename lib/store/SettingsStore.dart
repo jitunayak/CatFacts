@@ -35,4 +35,20 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool("tts") ?? false;
   }
+
+  // Future<ThemeState> loadTheme() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   var theme = prefs.getString('theme');
+  //   if (theme == Themes.dark.toString()) {
+  //     return DarkThemeState();
+  //   } else if (theme == Themes.light.toString()) {
+  //     return LightThemeState();
+  //   }
+  //   return SystemThemeState();
+  // }
+
+  // Future<void> saveTheme(Themes theme) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('theme', theme.toString());
+  // }
 }
