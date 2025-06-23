@@ -173,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   footer: const Text('You can choose your preferred voice'),
                   children: [
                     CupertinoListTile(
-                      leading: Icon(CupertinoIcons.speaker_2),
+                      leading: Icon(CupertinoIcons.waveform),
                       title: const Text('AI Voices'),
                       trailing: CupertinoButton(
                         onPressed: () {
@@ -214,7 +214,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   children: [
                     CupertinoListTile(
-                      leading: Icon(CupertinoIcons.mic),
+                      leading: Icon(CupertinoIcons.speaker_2),
                       title: const Text('Default TTS (Free)'),
                       trailing: CupertinoSwitch(
                         value: preferenceCubit.state.isSystemTTSEnabled,

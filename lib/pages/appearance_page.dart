@@ -37,7 +37,7 @@ class _AppearancePageState extends State<AppearancePage> {
                 children: [
                   CupertinoListTile(
                     title: const Text("Light"),
-                    leading: Icon(CupertinoIcons.sun_dust),
+                    leading: Icon(CupertinoIcons.sun_max),
                     trailing: Tick(isSelected: state == Themes.light),
                     onTap: () {
                       BlocProvider.of<ThemeCubit>(context).toggleToLightTheme();
