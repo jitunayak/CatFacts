@@ -2,8 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_flutter_app/bloc/preference_cubit.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
-import 'package:my_flutter_app/pages/appearance_page.dart';
 import 'package:my_flutter_app/service/cat_service.dart';
 import 'package:my_flutter_app/service/speech_service.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
@@ -27,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   late VideoPlayerController _controller;
+  var preferenceCubit = PreferenceCubit();
 
   void _initializeVideoPlayer() async {
     _controller = VideoPlayerController.asset('assets/videos/cat.mp4');
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _fetchCatFact() async {
     HapticFeedback.mediumImpact();
-    final shoudlAutoPlay = await _settingsService.loadAutoPlay();
+    final shoudlAutoPlay = preferenceCubit.state.shoudlAutoPlay;
     final String catFact = await _catService.getFact();
     setState(() {
       _catFact = catFact;

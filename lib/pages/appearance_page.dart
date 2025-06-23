@@ -1,24 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
-
-class Tick extends StatelessWidget {
-  final bool isSelected;
-  const Tick({super.key, required this.isSelected});
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoButton(
-      onPressed: () {},
-      child: isSelected
-          ? const Icon(
-              CupertinoIcons.check_mark,
-              color: CupertinoColors.activeGreen,
-            )
-          : const SizedBox(height: 20),
-    );
-  }
-}
+import 'package:my_flutter_app/widgets/tick.dart';
 
 class AppearancePage extends StatefulWidget {
   const AppearancePage({super.key});
@@ -46,6 +29,11 @@ class _AppearancePageState extends State<AppearancePage> {
           builder: (context, state) => ListView(
             children: [
               CupertinoListSection.insetGrouped(
+                hasLeading: true,
+                header: const Text(
+                  "THEME",
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                ),
                 children: [
                   CupertinoListTile(
                     title: const Text("Light"),
@@ -75,9 +63,57 @@ class _AppearancePageState extends State<AppearancePage> {
                   ),
                 ],
               ),
+
+              CupertinoListSection.insetGrouped(
+                header: const Text(
+                  "APP LOGO",
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                ),
+                children: [IconListTile()],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class IconListTile extends StatelessWidget {
+  const IconListTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoFormRow(
+      padding: EdgeInsets.all(16),
+      child: Row(
+        children: [
+          ClipRSuperellipse(
+            borderRadius: BorderRadiusGeometry.all(Radius.circular(12)),
+            child: Image.asset("assets/icon/app_icon.png", height: 60),
+          ),
+          SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Original",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const Text(
+                "Simplicity at its best",
+                style: TextStyle(
+                  color: CupertinoDynamicColor.withBrightness(
+                    color: CupertinoColors.inactiveGray,
+                    darkColor: CupertinoColors.extraLightBackgroundGray,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Tick(isSelected: true),
+        ],
       ),
     );
   }

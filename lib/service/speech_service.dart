@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:my_flutter_app/bloc/preference_cubit.dart';
 import 'package:my_flutter_app/constants/app_config.dart';
 import 'package:my_flutter_app/service/eleven_labs.dart';
 import 'package:my_flutter_app/store/SettingsStore.dart';
@@ -20,6 +21,7 @@ class SpeechService {
     _initializeHandlers();
   }
 
+  final preferenceCubit = PreferenceCubit();
   final SettingsService _settingsService;
   final AudioPlayer _audioPlayer;
   final FlutterTts flutterTts = FlutterTts();
@@ -66,7 +68,7 @@ class SpeechService {
       await stop();
 
       // Load TTS preference
-      final isDefaultTTS = await _settingsService.loadTTS();
+      final isDefaultTTS = preferenceCubit.state.isSystemTTSEnabled;
 
       if (isDefaultTTS) {
         await _playWithFlutterTTS(text);
