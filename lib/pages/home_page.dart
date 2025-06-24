@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -107,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
         middle: Text(widget.title),
         transitionBetweenRoutes: false,
       ),
-      child: Center(
+      child: SafeArea(
         child: BlocBuilder<ThemeCubit, Themes>(
           builder: (context, state) =>
               state == Themes.light && _catImage == null
@@ -117,33 +119,61 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    // Circular cat photo with shadow
-                    ClipOval(
-                      child: Transform(
-                        transform: Matrix4.identity(),
-                        alignment: FractionalOffset.center,
-                        child: _catImage == null
-                            ? const CupertinoActivityIndicator()
-                            : Image.memory(
-                                height: 160,
-                                width: 160,
-                                _catImage!,
-                                key: ValueKey(_catFact), // Force reload
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      color: CupertinoColors.systemGrey4,
-                                      child: Icon(
-                                        CupertinoIcons.photo,
-                                        size: 60,
-                                        color: CupertinoColors.systemGrey,
-                                      ),
-                                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 50),
+                          child: Container(
+                            width: 280,
+                            height: 280,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  CupertinoTheme.of(context).primaryColor,
+                                  CupertinoColors.systemPink,
+                                  CupertinoColors.white,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                      ),
+                            ),
+                          ),
+                        ),
+                        // Circular cat photo with shadow
+                        Transform.translate(
+                          offset: Offset(0, 0), // Adjust this offset to overlap
+                          child: ClipOval(
+                            child: _catImage == null
+                                ? const CupertinoActivityIndicator()
+                                : Image.memory(
+                                    height: 280,
+                                    width: 280,
+                                    _catImage!,
+                                    key: ValueKey(_catFact), // Force reload
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) => Container(
+                                          color: CupertinoColors.systemGrey4,
+                                          child: Icon(
+                                            CupertinoIcons.photo,
+                                            size: 60,
+                                            color: CupertinoColors.systemGrey,
+                                          ),
+                                        ),
+                                  ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 24),
+                    // const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: BlocBuilder<ThemeCubit, Themes>(
@@ -156,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    // const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
