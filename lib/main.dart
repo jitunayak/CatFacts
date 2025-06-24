@@ -37,6 +37,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return BlocBuilder<ThemeCubit, Themes>(
       builder: (context, state) => CupertinoApp.router(
         theme: {
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
           else if (state == Themes.dark)
             AppTheme.darkTheme
           else
-            CupertinoThemeData(),
+            isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
         }.first, // Access the first element of the set
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,

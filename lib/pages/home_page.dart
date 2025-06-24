@@ -104,6 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.title),
@@ -127,15 +130,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         ImageFiltered(
                           imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 50),
                           child: Container(
-                            width: 280,
-                            height: 280,
+                            width: 300,
+                            height: 300,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
                                 colors: [
                                   CupertinoTheme.of(context).primaryColor,
-                                  CupertinoColors.systemPink,
-                                  CupertinoColors.white,
+                                  isDarkMode
+                                      ? CupertinoColors.systemPink
+                                      : CupertinoColors.inactiveGray,
+                                  isDarkMode
+                                      ? CupertinoColors.white
+                                      : CupertinoColors.black,
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
