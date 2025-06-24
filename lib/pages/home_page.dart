@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   late VideoPlayerController _controller;
-  var preferenceCubit = PreferenceCubit();
+  late PreferenceCubit preferenceCubit;
 
   void _initializeVideoPlayer() async {
     _controller = VideoPlayerController.asset('assets/videos/cat.mp4');
@@ -40,7 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializeVideoPlayer();
-    _speechService = SpeechService(_settingsService, _audioPlayer);
+    preferenceCubit = BlocProvider.of<PreferenceCubit>(context);
+    _speechService = SpeechService(_settingsService, _audioPlayer, context);
     _catService.fetchAndCacheImage().then((value) {
       setState(() {
         _catImage = value;
@@ -93,7 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     _catService.fetchAndCacheImage();
 
-    if (shoudlAutoPlay) await _speak();
+    if (_speechService.isSpeaking) await _speechService.stop();
+    if (shoudlAutoPlay) {
+      await _speak();
+    }
   }
 
   @override

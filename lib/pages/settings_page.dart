@@ -96,10 +96,9 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  var preferenceCubit = PreferenceCubit();
-
   @override
   Widget build(BuildContext context) {
+    var preferenceCubit = BlocProvider.of<PreferenceCubit>(context);
     return BlocProvider(
       create: (context) => preferenceCubit,
       child: CupertinoPageScaffold(

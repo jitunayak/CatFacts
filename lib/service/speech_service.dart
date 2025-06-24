@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:my_flutter_app/bloc/preference_cubit.dart';
@@ -17,11 +19,14 @@ class SpeechService {
   final StreamController<bool> _speakingStateController =
       StreamController<bool>.broadcast();
 
-  SpeechService(this._settingsService, this._audioPlayer) {
+  final BuildContext context;
+
+  late PreferenceCubit preferenceCubit;
+  SpeechService(this._settingsService, this._audioPlayer, this.context) {
+    preferenceCubit = BlocProvider.of<PreferenceCubit>(context);
     _initializeHandlers();
   }
 
-  final preferenceCubit = PreferenceCubit();
   final SettingsService _settingsService;
   final AudioPlayer _audioPlayer;
   final FlutterTts flutterTts = FlutterTts();
@@ -69,7 +74,6 @@ class SpeechService {
 
       // Load TTS preference
       final isDefaultTTS = preferenceCubit.state.isSystemTTSEnabled;
-
       if (isDefaultTTS) {
         await _playWithFlutterTTS(text);
       } else {

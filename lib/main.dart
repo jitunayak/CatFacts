@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:my_flutter_app/bloc/preference_cubit.dart';
 import 'package:my_flutter_app/bloc/theme_cubit.dart';
 import 'package:my_flutter_app/constants/app_theme.dart';
 import 'package:my_flutter_app/pages/home_page.dart';
@@ -21,8 +22,11 @@ Future<void> main() async {
   );
   runApp(
     BlocProvider(
-      create: (BuildContext context) => ThemeCubit(),
-      child: const MyApp(),
+      create: (BuildContext context) => PreferenceCubit(),
+      child: BlocProvider(
+        create: (BuildContext context) => ThemeCubit(),
+        child: const MyApp(),
+      ),
     ),
   );
 }
