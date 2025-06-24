@@ -21,12 +21,12 @@ Future<void> main() async {
         : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
   runApp(
-    BlocProvider(
-      create: (BuildContext context) => PreferenceCubit(),
-      child: BlocProvider(
-        create: (BuildContext context) => ThemeCubit(),
-        child: const MyApp(),
-      ),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ThemeCubit()),
+        BlocProvider(create: (context) => PreferenceCubit()),
+      ],
+      child: const MyApp(),
     ),
   );
 }
