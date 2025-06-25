@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -19,7 +20,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   String _catFact = "Press the button to get a cat fact";
   Uint8List? _catImage;
 
@@ -30,6 +32,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   late VideoPlayerController _controller;
   late PreferenceCubit preferenceCubit;
+
+  late AnimationController _animationController;
+  late Animation<double> _blurAnimation;
+  late Animation<double> _rotationAnimation;
 
   void _initializeVideoPlayer() async {
     _controller = VideoPlayerController.asset('assets/videos/cat.mp4');
@@ -42,9 +48,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializeVideoPlayer();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _blurAnimation = Tween<double>(begin: 30.0, end: 50.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 2 * math.pi,
+    ).animate(_animationController);
+
     preferenceCubit = BlocProvider.of<PreferenceCubit>(context);
     _speechService = SpeechService(_settingsService, _audioPlayer, context);
     _catService.fetchAndCacheImage().then((value) {
+      if (!mounted) return;
       setState(() {
         _catImage = value;
       });
@@ -54,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    _controller.dispose();
+    _animationController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -87,11 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
     HapticFeedback.mediumImpact();
     final shoudlAutoPlay = preferenceCubit.state.shoudlAutoPlay;
     final String catFact = await _catService.getFact();
+    final catImage = _catService.getImageBytes();
+    if (!mounted) return;
     setState(() {
       _catFact = catFact;
-    });
-    final catImage = _catService.getImageBytes();
-    setState(() {
       _catImage = catImage;
     });
     _catService.fetchAndCacheImage();
@@ -127,8 +150,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        ImageFiltered(
-                          imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 50),
+                        AnimatedBuilder(
+                          animation: _animationController,
+                          builder: (context, child) {
+                            return ImageFiltered(
+                              imageFilter: ImageFilter.blur(
+                                sigmaX: _blurAnimation.value,
+                                sigmaY: _blurAnimation.value + 20,
+                              ),
+                              child: Transform.rotate(
+                                angle: _rotationAnimation.value,
+                                child: child,
+                              ),
+                            );
+                          },
                           child: Container(
                             width: 300,
                             height: 300,
@@ -137,12 +172,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               gradient: LinearGradient(
                                 colors: [
                                   CupertinoTheme.of(context).primaryColor,
-                                  isDarkMode
+                                  isDarkMode || state == Themes.dark
                                       ? CupertinoColors.systemPink
-                                      : CupertinoColors.inactiveGray,
-                                  isDarkMode
+                                      : CupertinoColors.activeGreen,
+                                  isDarkMode || state == Themes.dark
                                       ? CupertinoColors.white
-                                      : CupertinoColors.black,
+                                      : CupertinoColors.white,
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -155,10 +190,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           offset: Offset(0, 0), // Adjust this offset to overlap
                           child: ClipOval(
                             child: _catImage == null
-                                ? const CupertinoActivityIndicator()
+                                ? null
                                 : Image.memory(
-                                    height: 280,
-                                    width: 280,
+                                    height: 260,
+                                    width: 260,
                                     _catImage!,
                                     key: ValueKey(_catFact), // Force reload
                                     fit: BoxFit.cover,
@@ -184,13 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: BlocBuilder<ThemeCubit, Themes>(
-                        builder: (context, state) => state == Themes.dark
-                            ? ShimmerText(text: _catFact)
-                            : Text(
-                                _catFact,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18),
-                              ),
+                        builder: (context, state) =>
+                            ShimmerText(text: _catFact),
                       ),
                     ),
                     // const SizedBox(height: 24),

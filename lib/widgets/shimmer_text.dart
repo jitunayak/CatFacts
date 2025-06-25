@@ -27,19 +27,30 @@ class _ShimmerTextState extends State<ShimmerText>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
         return ShaderMask(
           shaderCallback: (Rect bounds) {
             return LinearGradient(
-              colors: const [
-                Colors.transparent,
-                Colors.white,
-                Colors.transparent,
-                Colors.white,
-                Colors.transparent,
-              ],
+              colors: isDarkMode
+                  ? const [
+                      Colors.transparent,
+                      Colors.white,
+                      Colors.transparent,
+                      Colors.white,
+                      Colors.transparent,
+                    ]
+                  : [
+                      Colors.grey,
+                      Colors.transparent,
+                      Colors.grey,
+                      Colors.transparent,
+                      Colors.grey,
+                    ],
               stops: [
                 (_animation.value - 0.6).clamp(0.0, 1.0),
                 (_animation.value - 0.3).clamp(0.0, 1.0),

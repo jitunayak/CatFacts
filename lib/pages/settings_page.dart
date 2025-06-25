@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 final List<Map<String, String>> _voices = [
   {"name": "Anika - Friendly", "identifier": "Sm1seazb4gs7RSlUVw7c"},
   {"name": "Aahir - Expressive", "identifier": "82hBsVN6GRUwWKT8d1Kz"},
-  {"name": "Sarah - Confident", "indentifier": "EXAVITQu4vr4xnSDxMaL"},
+  {"name": "Sarah - Confident", "identifier": "EXAVITQu4vr4xnSDxMaL"},
 ];
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -35,10 +35,13 @@ class _SettingsPageState extends State<SettingsPage> {
     _settingsService.loadVoice().then((value) {
       Map<String, String> voice = _voices.firstWhere(
         (e) => e['identifier'] == value,
+        orElse: () => _voices.first,
       );
-      setState(() {
-        _selectedVoiceId = voice;
-      });
+      if (mounted) {
+        setState(() {
+          _selectedVoiceId = voice;
+        });
+      }
     });
   }
 
@@ -217,9 +220,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text('Default TTS (Free)'),
                       trailing: CupertinoSwitch(
                         value: preferenceCubit.state.isSystemTTSEnabled,
-                        onChanged: (value) => {
-                          preferenceCubit.saveIsSystemTTSEnabled(value),
-                        },
+                        onChanged: preferenceCubit.saveIsSystemTTSEnabled,
                       ),
                     ),
                     CupertinoListTile(
@@ -227,9 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text('Auto Play'),
                       trailing: CupertinoSwitch(
                         value: preferenceCubit.state.shoudlAutoPlay,
-                        onChanged: (value) => {
-                          preferenceCubit.saveShouldAutoPlay(value),
-                        },
+                        onChanged: preferenceCubit.saveShouldAutoPlay,
                       ),
                     ),
                   ],

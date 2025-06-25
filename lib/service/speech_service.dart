@@ -103,8 +103,9 @@ class SpeechService {
 
     try {
       await flutterTts.setLanguage("en-US");
-      await flutterTts.setSpeechRate(0.5);
+      await flutterTts.setSpeechRate(0.4);
       await flutterTts.setVolume(1.0);
+      await flutterTts.setPitch(1.0);
 
       // _speakingStateController.add(ill) be set by the start handler
       await flutterTts.speak(text);
